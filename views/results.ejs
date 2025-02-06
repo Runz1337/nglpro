@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= page.name %> - Results</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 20px;
+      color: #333;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+    .entry {
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      background: #fff;
+      transition: 0.3s;
+    }
+    .entry:hover {
+      background: #f9f9f9;
+      cursor: pointer;
+    }
+    .toggle {
+      font-weight: bold;
+      color: #007bff;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    .details {
+      display: none;
+      margin-top: 10px;
+      background: #fafafa;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background: #007bff;
+      color: white;
+    }
+    .back-btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 15px;
+      background: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+    .back-btn:hover {
+      background: #0056b3;
+    }
+  </style>
+  <script>
+    function toggleDetails(id) {
+      const el = document.getElementById(id);
+      el.style.display = el.style.display === "none" ? "block" : "none";
+    }
+
+    // Convert UTC timestamp to Indian Time (IST)
+    function convertToIST(utcTime) {
+      const date = new Date(utcTime);
+      return new Intl.DateTimeFormat("en-IN", {
+        timeZone: "Asia/Kolkata",
+        year: "numeric",
+        month: "short",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      }).format(date);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".timestamp").forEach(el => {
+        el.textContent = convertToIST(el.dataset.utc);
+      });
+    });
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>Results for "<%= page.name %>"</h1>
+    <% if (page.history.length === 0) { %>
+      <p>No tracking data available yet.</p>
+    <% } else { %>
+      <% page.history.forEach((entry, index) => { %>
+        <div class="entry" onclick="toggleDetails('details-<%= index %>')">
+          <div class="toggle">
+            <strong>#<%= index + 1 %></strong> | <span class="timestamp" data-utc="<%= entry.timestamp %>">Loading...</span> | <strong>📍 Location:</strong> <%= entry.location ? entry.location.city + ", " + entry.location.country : "Unknown" %>
+          </div>
+          <div class="details" id="details-<%= index %>">
+            <table>
+              <tr><th>🌐 IP Address</th><td><%= entry.location ? entry.location.ip : "Unknown" %></td></tr>
+              <tr><th>📍 Country</th><td><%= entry.location ? entry.location.country : "Unknown" %></td></tr>
+              <tr><th>🏙 City</th><td><%= entry.location ? entry.location.city : "Unknown" %></td></tr>
+              <tr><th>🏢 ISP</th><td><%= entry.location ? entry.location.organization : "Unknown" %></td></tr>
+              <tr><th>🗺 Coordinates</th><td><%= entry.location ? entry.location.latitude + ", " + entry.location.longitude : "Unknown" %></td></tr>
+              <tr>
+                <th>🖥 Device Type</th>
+                <td><%= entry.device_details ? entry.device_details.device_type : "Unknown" %></td>
+              </tr>
+              <tr>
+                <th>🏷 Device Brand</th>
+                <td><%= entry.device_details ? entry.device_details.brand : "Unknown" %></td>
+              </tr>
+              <tr>
+                <th>📱 Device Model</th>
+                <td><%= entry.device_details ? entry.device_details.model : "Unknown" %></td>
+              </tr>
+              <tr>
+                <th>📏 Screen Resolution</th>
+                <td><%= entry.device_details ? entry.device_details.screen_resolution : "Unknown" %></td>
+              </tr>
+              <tr>
+                <th>🛠 OS</th>
+                <td><%= entry.device_details ? entry.device_details.os : "Unknown" %></td>
+              </tr>
+              <tr>
+                <th>🔧 OS Version</th>
+                <td><%= entry.device_details ? entry.device_details.os_version : "Unknown" %></td>
+              </tr>
+              <tr>
+                <th>🌍 Browser</th>
+                <td><%= entry.device_details ? entry.device_details.browser : "Unknown" %></td>
+              </tr>
+              <tr>
+                <th>🌐 Browser Version</th>
+                <td><%= entry.device_details ? entry.device_details.browser_version : "Unknown" %></td>
+              </tr>
+              <tr>
+                <th>🚀 Platform</th>
+                <td><%= entry.device_details ? entry.device_details.platform : "Unknown" %></td>
+              </tr>
+              <tr>
+                <th>🖥 Browser Engine</th>
+                <td><%= entry.device_details ? entry.device_details.engine : "Unknown" %></td>
+              </tr>
+              <tr>
+                <th>🔄 User-Agent String</th>
+                <td><%= entry.device_details ? entry.device_details.raw : "Unknown" %></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      <% }); %>
+    <% } %>
+    <a href="/createx" class="back-btn">⬅ Back to Dashboard</a>
+  </div>
+</body>
+</html>
